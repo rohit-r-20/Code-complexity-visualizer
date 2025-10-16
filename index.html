@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CodeLens Pro — Code Complexity Dashboard</title>
+
+  <!-- External libs -->
+  <script src="https://unpkg.com/esprima@4.0.1/dist/esprima.js"></script>
+  <script src="https://unpkg.com/cytoscape@3.26.2/dist/cytoscape.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="assets/logo.png" alt="logo" class="logo" onerror="this.style.display='none'"/>
+      <div>
+        <h1>CodeLens Pro</h1>
+        <p class="muted">Interactive Complexity Dashboard</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <label class="btn highlight">
+        📁 Upload Files
+        <input id="fileInput" type="file" accept=".js,.jsx,.ts,.tsx,.py,.cpp,.c,.java,.txt" multiple hidden>
+      </label>
+
+
+      <button id="pasteBtn" class="btn">📝 Paste Code</button>
+      <button id="analyzeBtn" class="btn primary">🔍 Analyze</button>
+      <button id="clearBtn" class="btn danger">🧹 Clear</button>
+      <button id="deleteBtn" class="btn danger">🗑 Delete Node Mode</button>
+      <button id="restoreBtn" class="btn">♻️ Restore Deleted</button>
+
+      <div class="thresholds">
+        <label>LOC threshold
+          <input id="locThreshold" type="number" min="1" value="40">
+        </label>
+        <label>Depth threshold
+          <input id="depthThreshold" type="number" min="0" value="3">
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="exportJson" class="btn">📦 Export JSON</button>
+        <button id="exportPNG" class="btn">🖼 Export Graph PNG</button>
+      </div>
+
+      <div class="search">
+        <input id="searchInput" placeholder="Search files / functions..." />
+      </div>
+
+      <div class="theme-switch">
+        <label>🌙 Dark Mode
+          <input id="themeToggle" type="checkbox"/>
+        </label>
+      </div>
+
+    </div>
+
+    <div class="sidebar-footer">
+      <small>Built for Hackathons • Client-side only</small>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h2 id="title">Project: —</h2>
+        <p class="muted" id="subtitle">Upload files to begin analysis</p>
+      </div>
+
+      <div class="summary-cards">
+        <div class="card">
+          <div class="card-title">Files</div>
+          <div class="card-value" id="filesCount">0</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Functions</div>
+          <div class="card-value" id="functionsCount">0</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Avg Complexity</div>
+          <div class="card-value" id="avgComplexity">0.00</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <div id="graph-container" class="graph"></div>
+
+      <aside class="right-panel">
+        <div class="panel-section">
+          <h3>Node / File Details</h3>
+          <pre id="details" class="codebox">Click a node to see details</pre>
+        </div>
+
+        <div class="panel-section">
+          <h3>Recently Deleted</h3>
+          <ul id="deletedList" class="deleted-list"></ul>
+        </div>
+
+        <div class="panel-section">
+          <h3>Code Viewer</h3>
+          <select id="fileSelect"></select>
+          <pre id="codeViewer" class="codeviewer">No file selected</pre>
+          <div class="code-actions">
+            <button id="downloadCode" class="btn">⬇ Download</button>
+            <button id="copyCode" class="btn">📋 Copy</button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <h3>Complexity Distribution</h3>
+          <canvas id="pieChart" width="300" height="200"></canvas>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <!-- Paste modal -->
+  <div id="pasteModal" class="modal">
+    <div class="modal-card">
+      <h3>Paste Code</h3>
+      <input id="pasteFilename" placeholder="Filename (example.js)"/>
+      <textarea id="pasteText" placeholder="// paste your code here"></textarea>
+      <div class="modal-actions">
+        <button id="pasteAdd" class="btn primary">Add</button>
+        <button id="pasteCancel" class="btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
